@@ -12,7 +12,7 @@ package openapi
 import (
 	"context"
 	// "errors"
-	// "net/http"
+	"net/http"
 )
 
 // BookApiService is a service that implements the logic for the BookApiServicer
@@ -30,9 +30,49 @@ func NewBookApiService() BookApiServicer {
 func (s *BookApiService) BookGetBook(ctx context.Context, q string, filter string, download string, startIndex int32, maxResults int32, printType string, orderBy string) (ImplResponse, error) {
 	// TODO - update BookGetBook with the required logic for this service method.
 	// Add api_book_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+	// GET API KEY FOR GOOGLE BOOKS API
+	baseUrl := "https://www.googleapis.com/books/v1/volumes"
+	req, err := http.NewRequest("GET", baseUrl , nil)
+    if err != nil {
+        log.Print(err)
+		return Response(http.StatusNotImplemented, nil), errors.New("Need to provide a valid URL")
+    }
 
+    // if you appending to existing query this works fine 
+    query := req.URL.Query()
+	key := GetEnvVar("GOOGLE_API_KEY","")
+	if key == "" {
+		return Response(http.StatusNotImplemented, nil), errors.New("Need to provide a valid API key")
+	}
+    query.Add("key", key)
+	if q != "" {
+		query.Add("q", q)
+	} else {
+		return Response(http.StatusNotImplemented, nil), errors.New("Need to provide a valid query")
+	}
+
+    // or you can create new url.Values struct and encode that like so
+	if filter != "" {
+		// add filter validation here
+		query.Add("filter", filter)
+	}
+	if download != "" {
+		// add download validation here
+		query.Add("download", download)
+	}
+
+    req.URL.RawQuery = q.Encode()
+
+    fmt.Println(req.URL.String())
+	// http.get
+	resp, err := http.Get(req.URL.String())
+	if err != nil {
+		// handle error
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
 	//TODO: Uncomment the next line to return response Response(200, {}) or use other options such as http.Ok ...
-	return Response(200, nil), nil
+	return Response(200, body), nil
 
 	// return Response(http.StatusNotImplemented, nil), errors.New("BookGetBook method not implemented")
 }

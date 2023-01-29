@@ -25,5 +25,5 @@ func main() {
 	router := openapi.NewRouter(BookApiController)
 	// get PORT from PORT variable
 	port := openapi.GetEnvVar("PORT", "8080")
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":" + port, router))
 }

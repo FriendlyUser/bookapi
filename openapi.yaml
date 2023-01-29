@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  description: |-
+    
+    # Authentication
+    simple no api access, no access token, just a toy project
+  version: '1'
+  title: BookApi API (beta ver.)
+  x-logo: null
+paths:
+# https://developers.google.com/books/docs/v1/using#WorkingVolumes
+  /book:
+    get:
+      tags:
+        - book
+      summary: Get book details
+      operationId: book_get_book
+      parameters:
+        - name: q
+          in: query
+          description: |
+            See https://developers.google.com/books/docs/v1/using#WorkingVolumes
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: |
+            You can use the filter parameter to restrict the returned results further by setting it to one of the following values:
+            
+            partial - Returns results where at least parts of the text are previewable.
+            full - Only returns results where all of the text is viewable.
+            free-ebooks - Only returns results that are free Google eBooks.
+            paid-ebooks - Only returns results that are Google eBooks with a price.
+            ebooks - Only returns results that are Google eBooks, paid or free. Examples of non-eBooks would be publisher content that is available in limited preview and not for sale, or magazines.
+          schema:
+            type: string
+            enum: [partial, full, free-ebooks, paid-ebooks, ebooks]
+        - name: download
+          in: query
+          description: |
+            You use the download parameter to restrict the returned results to volumes that have an available download format of epub by setting the to the value epub.
+
+            The following example searches for books with an epub download available:
+          schema:
+            type: string
+            enum: [epub, pdf]
+            
+        - name: startIndex
+          in: query
+          schema:
+            type: integer
+        - name: maxResults
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 40
+        - name: printType
+          in: query
+          schema:
+            type: string
+            enum: [all, books, magazines]
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+            enum: [relevance, newest]
+
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              examples:
+                response:
+                  value: 
+                    id: 7

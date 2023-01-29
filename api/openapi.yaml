@@ -1,0 +1,110 @@
+openapi: 3.0.0
+info:
+  description: |2-
+
+    # Authentication
+    simple no api access, no access token, just a toy project
+  title: BookApi API (beta ver.)
+  version: "1"
+servers:
+- url: /
+paths:
+  /book:
+    get:
+      operationId: book_get_book
+      parameters:
+      - description: |
+          See https://developers.google.com/books/docs/v1/using#WorkingVolumes
+        explode: true
+        in: query
+        name: q
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: |
+          You can use the filter parameter to restrict the returned results further by setting it to one of the following values:
+
+          partial - Returns results where at least parts of the text are previewable.
+          full - Only returns results where all of the text is viewable.
+          free-ebooks - Only returns results that are free Google eBooks.
+          paid-ebooks - Only returns results that are Google eBooks with a price.
+          ebooks - Only returns results that are Google eBooks, paid or free. Examples of non-eBooks would be publisher content that is available in limited preview and not for sale, or magazines.
+        explode: true
+        in: query
+        name: filter
+        required: false
+        schema:
+          enum:
+          - partial
+          - full
+          - free-ebooks
+          - paid-ebooks
+          - ebooks
+          type: string
+        style: form
+      - description: |
+          You use the download parameter to restrict the returned results to volumes that have an available download format of epub by setting the to the value epub.
+
+          The following example searches for books with an epub download available:
+        explode: true
+        in: query
+        name: download
+        required: false
+        schema:
+          enum:
+          - epub
+          - pdf
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: startIndex
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: maxResults
+        required: false
+        schema:
+          default: 10
+          maximum: 40
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: printType
+        required: false
+        schema:
+          enum:
+          - all
+          - books
+          - magazines
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: orderBy
+        required: false
+        schema:
+          enum:
+          - relevance
+          - newest
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    id: 7
+          description: OK
+      summary: Get book details
+      tags:
+      - book
+components:
+  schemas: {}

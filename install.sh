@@ -1,0 +1,1 @@
+npx @openapitools/openapi-generator-cli generate -i openapi.yaml -g go-server -o .

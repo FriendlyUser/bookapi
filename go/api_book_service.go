@@ -44,7 +44,7 @@ func (s *BookApiService) BookGetBook(ctx context.Context, q string, filter strin
 
 	// if you appending to existing query this works fine
 	query := req.URL.Query()
-	key := GetEnvVar("GOOGLE_BOOK_API", "")
+	key := GetEnvVar("GOOGLE_BOOK_API_KEY", "")
 	if key == "" {
 		return Response(http.StatusNotImplemented, nil), errors.New("Need to provide a valid API key")
 	}

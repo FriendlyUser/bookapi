@@ -9,3 +9,7 @@ micros:
     run: ./main
     include:
       - main
+    presets:
+      env:
+        - name: GOOGLE_BOOK_API_KEY
+         description: Google Books API Key

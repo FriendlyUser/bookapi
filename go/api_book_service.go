@@ -11,7 +11,12 @@ package openapi
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"io"
+
 	// "errors"
+	"encoding/json"
 	"net/http"
 )
 
@@ -32,26 +37,25 @@ func (s *BookApiService) BookGetBook(ctx context.Context, q string, filter strin
 	// Add api_book_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 	// GET API KEY FOR GOOGLE BOOKS API
 	baseUrl := "https://www.googleapis.com/books/v1/volumes"
-	req, err := http.NewRequest("GET", baseUrl , nil)
-    if err != nil {
-        log.Print(err)
+	req, err := http.NewRequest("GET", baseUrl, nil)
+	if err != nil {
 		return Response(http.StatusNotImplemented, nil), errors.New("Need to provide a valid URL")
-    }
+	}
 
-    // if you appending to existing query this works fine 
-    query := req.URL.Query()
-	key := GetEnvVar("GOOGLE_API_KEY","")
+	// if you appending to existing query this works fine
+	query := req.URL.Query()
+	key := GetEnvVar("GOOGLE_BOOK_API", "")
 	if key == "" {
 		return Response(http.StatusNotImplemented, nil), errors.New("Need to provide a valid API key")
 	}
-    query.Add("key", key)
+	query.Add("key", key)
 	if q != "" {
 		query.Add("q", q)
 	} else {
 		return Response(http.StatusNotImplemented, nil), errors.New("Need to provide a valid query")
 	}
 
-    // or you can create new url.Values struct and encode that like so
+	// or you can create new url.Values struct and encode that like so
 	if filter != "" {
 		// add filter validation here
 		query.Add("filter", filter)
@@ -61,18 +65,20 @@ func (s *BookApiService) BookGetBook(ctx context.Context, q string, filter strin
 		query.Add("download", download)
 	}
 
-    req.URL.RawQuery = q.Encode()
-
-    fmt.Println(req.URL.String())
 	// http.get
-	resp, err := http.Get(req.URL.String())
+	resp, err := http.Get(req.URL.String() + "?" + query.Encode())
 	if err != nil {
 		// handle error
 	}
+	fmt.Println(req.URL.String() + "?" + query.Encode())
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
+	var bookResponse GoogleBookResponse
+	err = json.Unmarshal(body, &bookResponse)
+	// destructure body into GoogleBookResponse
+
 	//TODO: Uncomment the next line to return response Response(200, {}) or use other options such as http.Ok ...
-	return Response(200, body), nil
+	return Response(200, bookResponse), nil
 
 	// return Response(http.StatusNotImplemented, nil), errors.New("BookGetBook method not implemented")
 }
